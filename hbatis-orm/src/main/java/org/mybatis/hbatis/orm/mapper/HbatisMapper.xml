@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.mybatis.hbatis.orm.mapper.HbatisMapper">
+	<!-- 约束(含别名) -->
+	<sql id="Restriction">
+		<choose>
+			<when test="r.singleValue">
+				${r.fieldNode.sqlColumn} ${r.oper} #{r.value}
+			</when>
+			<when test="r.betweenValue">
+				${r.fieldNode.sqlColumn} ${r.oper} between #{r.value}
+				and #{r.secondValue}
+			</when>
+			<when test="r.listValue">
+				${r.fieldNode.sqlColumn} ${r.oper}
+				<foreach collection="r.values" item="listItem" open="("
+					close=")" separator=",">
+					#{listItem}
+				</foreach>
+			</when>
+		</choose>
+	</sql>
+	<!-- 约束 -->
+	<sql id="Restriction_NoAlias">
+		<choose>
+			<when test="r.singleValue">
+				${r.fieldNode.fieldMeta.columnName} ${r.oper}
+				#{r.value}
+			</when>
+			<when test="r.betweenValue">
+				${r.fieldNode.fieldMeta.columnName} ${r.oper} between
+				#{r.value} and #{r.secondValue}
+			</when>
+			<when test="r.listValue">
+				${r.fieldNode.fieldMeta.columnName} ${r.oper}
+				<foreach collection="r.values" item="listItem" open="("
+					close=")" separator=",">
+					#{listItem}
+				</foreach>
+			</when>
+		</choose>
+	</sql>
+	<!-- 插入 -->
+	<insert id="insertByStatement"
+		parameterType="org.mybatis.hbatis.orm.criteria.statement.InsertStatement">
+		insert into ${st.entityNode.entityMeta.tableName}
+		<foreach collection="st.fieldMetadataList" item="f" separator=","
+			open="(" close=")">
+			${f.fieldMeta.columnName}
+		</foreach>
+		values
+		<foreach collection="st.fieldMetadataList" item="f" separator=","
+			open="(" close=")">
+			#{f.value,jdbcType=${f.fieldMeta.jdbcType}}
+		</foreach>
+	</insert>
+	<!-- 标准查询 -->
+	<update id="updateByStatement"
+		parameterType="org.mybatis.hbatis.orm.criteria.statement.UpdateStatement">
+		update ${st.entityNode.entityMeta.tableName} set
+		<foreach collection="st.fieldMetadataList" item="f" separator=",">
+			${f.fieldMeta.columnName} =
+			#{f.value,jdbcType=${f.fieldMeta.jdbcType}}
+		</foreach>
+		<where>
+			<foreach collection="st.restrictions.criterionList" item="r"
+				separator="and">
+				<include refid="Restriction_NoAlias" />
+			</foreach>
+		</where>
+	</update>
+
+	<!-- 标准查询统计 -->
+	<delete id="deleteByRestrictions" parameterType="org.mybatis.hbatis.orm.criteria.Restrictions">
+		delete from ${restrictions.entityNode.entityMeta.tableName}
+		<where>
+			<foreach collection="restrictions.criterionList" item="r"
+				separator="and">
+				<include refid="Restriction_NoAlias" />
+			</foreach>
+		</where>
+	</delete>
+
+	<!-- 标准查询统计 -->
+	<select id="countByRestrictions" parameterType="org.mybatis.hbatis.orm.criteria.Restrictions"
+		resultType="java.lang.Integer">
+		select count(1) from ${restrictions.entityNode.sqlTable}
+		<where>
+			<foreach collection="restrictions.criterionList" item="r" separator="and">
+				<include refid="Restriction" />
+			</foreach>
+		</where>
+	</select>
+	<!-- criteria query tpl[start] -->
+	<select id="selectByStatement"
+		parameterType="org.mybatis.hbatis.orm.criteria.statement.SelectStatement"
+		resultType="map">
+		<choose>
+			<when test="st.fields!=null and st.fields.size() gt 0">
+				select <foreach collection="st.fields" item="f" separator=",">${f.sqlColumn} </foreach> from ${st.entityNode.sqlTable}
+			</when>
+			<otherwise>
+				select * from ${st.entityNode.sqlTable}
+			</otherwise>
+		</choose>
+		<where>
+			<foreach collection="st.restrictions.criterionList" item="r" separator="and">
+				<include refid="Restriction" />
+			</foreach>
+		</where>
+		<if test="st.orders!=null">
+			order by ${st.orders}
+		</if>
+		<if test="st.pageRange!=null and st.pageRange.limit gt -1">
+			limit ${st.pageRange.start},${st.pageRange.limit}
+		</if>
+	</select>
+	<sql id="RuleParam">
+		<if test="rp!=null"> ${rp.relation}
+			<foreach item="g" index="index" collection="rp.groups" open="(" close=")">
+				<if test="index gt 0">${rg.relation} </if>
+				<foreach collection="g.fieldConditions" item="c" index="fcIndex" open="(" close=")">
+					<if test="fcIndex gt 0">${g.relation} </if>
+					${c.field} ${c.op}
+					<choose>
+						<when test="c.op == 'between' or c.op=='not between'">#{c.value[0]} and #{c.value[1]}</when>
+						<when test="c.op == 'in' or c.op=='not in'">
+							<foreach collection="c.value" item="v" open="(" separator="," close=")">
+								#{v}
+							</foreach>
+						</when>
+						<otherwise>#{c.value}</otherwise>
+					</choose>
+				</foreach>
+			</foreach>
+		 </if>
+	</sql>
+	<!-- criteria query tpl[end] -->
+</mapper>
