@@ -65,16 +65,31 @@
             <!--</url>-->
         <!--</repository>-->
     <!--</distributionManagement>-->
+    <!--<distributionManagement>-->
+        <!--<repository>-->
+            <!--<id>MyReleasesNexus</id>-->
+            <!--<name>Nexus Releases Repository</name>-->
+            <!--<url>http://122.51.227.25:8081/repository/maven-releases/</url>-->
+        <!--</repository>-->
+        <!--<snapshotRepository>-->
+            <!--<id>MySnapshotNexus</id>-->
+            <!--<name>Nexus snapshots Repository</name>-->
+            <!--<url>http://122.51.227.25:8081/repository/maven-snapshots/</url>-->
+        <!--</snapshotRepository>-->
+    <!--</distributionManagement>-->
     <distributionManagement>
         <repository>
-            <id>MyReleasesNexus</id>
-            <name>Nexus Releases Repository</name>
-            <url>http://122.51.227.25:8081/repository/maven-releases/</url>
+            <id>m2-releases</id>
+            <url>
+                http://maven-host:8081/nexus/content/repositories/releases/
+            </url>
         </repository>
         <snapshotRepository>
-            <id>MySnapshotNexus</id>
-            <name>Nexus snapshots Repository</name>
-            <url>http://122.51.227.25:8081/repository/maven-snapshots/</url>
+            <id>m2-snapshots</id>
+            <name>nexus snapshots</name>
+            <url>http://maven-host:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
+
     </distributionManagement>
+
 </project>
