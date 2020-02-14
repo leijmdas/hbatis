@@ -1,12 +1,16 @@
 package org.mybatis.hbatis.orm.criteria.support.query;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class AbstractQueryParam<T> {
 
 	public static final int LIMIT = 20;
 
 	private String orderBys;
+	private Map<String, DateRange> dateRanges = new HashMap<String, DateRange>();
 
-	private T param;
+    private T param;
 
 	private Integer start = 0;
 
@@ -82,4 +86,12 @@ public abstract class AbstractQueryParam<T> {
 		} ;
 		this.sortOrders = SortOrders.transFromString(this.sortOrders.getEntityNode(), str);
 	}
+	public Map<String, DateRange> getDateRanges() {
+		return dateRanges;
+	}
+
+	public void setDateRanges(Map<String, DateRange> dateRanges) {
+		this.dateRanges = dateRanges;
+	}
+
 }
