@@ -3,6 +3,9 @@ package org.mybatis.hbatis.orm.criteria.support.query;
 public abstract class AbstractQueryParam<T> {
 
 	public static final int LIMIT = 20;
+
+	private String orderBys;
+
 	private T param;
 
 	private Integer start = 0;
@@ -55,6 +58,15 @@ public abstract class AbstractQueryParam<T> {
 		this.ruleParam = ruleParam;
 	}
 
+
+	public String getOrderBys() {
+		return orderBys;
+	}
+
+	public void setOrderBys(String orderBys) {
+		this.orderBys = orderBys;
+	}
+
 	public SortOrders<T> getSortOrders() {
 		return sortOrders;
 	}
@@ -63,9 +75,11 @@ public abstract class AbstractQueryParam<T> {
 	public void setSortOrders(SortOrders<T> sortOrders) {
 		this.sortOrders = sortOrders;
 	}
-	
+
 	public void setSortBys(String str) {
-		if(this.sortOrders.getEntityNode() == null) return ;
+		if (this.sortOrders.getEntityNode() == null) {
+			return;
+		} ;
 		this.sortOrders = SortOrders.transFromString(this.sortOrders.getEntityNode(), str);
 	}
 }

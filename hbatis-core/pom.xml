@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mybatis</groupId>
         <artifactId>hbatis</artifactId>
-        <version>2.3.1</version>
+        <version>3.0.0</version>
     </parent>
     <groupId>org.mybatis.hbatis</groupId>
     <artifactId>hbatis-core</artifactId>
